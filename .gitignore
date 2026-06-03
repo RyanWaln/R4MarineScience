@@ -20,6 +20,9 @@
 # Folders to ignore
 archive/
 output/
+test/
 
 # Keywords to ignore
 *archive
+.httr-oauth
+.quarto

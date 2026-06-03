@@ -1,0 +1,56 @@
+---
+# MB5370: Introduction to Programming
+title: "Wrangling_Plotting_M2W1"
+author: "Ryan Waln"
+date: "2026-06-02"
+output: html_document
+---
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Creating a Standalone Clone of a Repository
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```{r}
+#install.packages("gert")
+#install.packages("usethis")
+```
+
+```{r}
+library("gert")
+library("usethis")
+```
+## Github setup (run in console)
+```{r}
+##Get git credentials
+credentials::git_credential_ask()  
+
+## see Git status
+usethis::git_sitrep()
+
+## create Personal Access Token
+#usethis::create_github_token() 
+
+## prompt to insert PAT
+#gitcreds::gitcreds_set() 
+
+##track current project locally (can also use Tools > Project Options … > Git/SVN, and set to Git)
+## or run  git init in terminal
+usethis::use_git() 
+
+##Enter into terminal if using USB
+#git config --global --add safe.directory "D:/Tri 2 2026/Techniques in Marine Science 1/Data_Science_in_R/R4MarineScience"
+
+
+
+##Then restart R and run 
+usethis::git_sitrep() 
+
+usethis::use_github() # Have github start tracking files
+```
+
+
+
+```{r}
+gert::git_remote_remove("origin") #severs connection to original repository to allow storage in own GitHub after cloning
+```
+ 
