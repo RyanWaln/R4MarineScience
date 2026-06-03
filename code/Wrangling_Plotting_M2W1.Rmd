@@ -22,6 +22,12 @@ library("usethis")
 
 ## Github setup (run in console)
 ```{r}
+##Enter into terminal if using USB
+#git config --global --add safe.directory "D:/Tri 2 2026/Techniques in Marine Science 1/Data_Science_in_R/R4MarineScience"
+
+##Then restart R and run 
+usethis::git_sitrep() 
+
 ##Get git credentials
 credentials::git_credential_ask()  
 
@@ -34,27 +40,35 @@ usethis::use_git_config(
 )
 
 ## create Personal Access Token
-#usethis::create_github_token() 
+usethis::create_github_token() 
 
 ## prompt to insert PAT
 #gitcreds::gitcreds_set() 
+
+gert::git_remote_remove("origin") #severs connection to original repository to allow storage in own GitHub after cloning
 
 ##track current project locally (can also use Tools > Project Options … > Git/SVN, and set to Git)
 ## or run  git init in terminal
 usethis::use_git() 
 
-##Enter into terminal if using USB
-#git config --global --add safe.directory "D:/Tri 2 2026/Techniques in Marine Science 1/Data_Science_in_R/R4MarineScience"
-
-##Then restart R and run 
-usethis::git_sitrep() 
-
 usethis::use_github() # Have github start tracking files
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Creating a Standalone Clone of a Repository
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+## Housekeeping
 ```{r}
-gert::git_remote_remove("origin") #severs connection to original repository to allow storage in own GitHub after cloning
+## Inventory every active object currently residing in session RAM
+objects()
+## Purge global environment
+rm(list = ls())
+# Confirm that global session memory now completely vacant
+objects()
+
+#In global options: Uncheck the box that says: Re-restore .RData into workspace at startup and set to Never
+
 ```
+
  
