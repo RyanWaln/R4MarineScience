@@ -1,6 +1,6 @@
 ---
 title: "R for Marine Science Workshop 1"
-author: "Your name here"
+author: "Ryan Waln"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
  html_document:
@@ -28,9 +28,6 @@ knitr::opts_chunk$set(
 	warning = FALSE)
 ```
 
-## Introduction
-
-
 ### Clear out environment
 ```{r housekeeping, message=FALSE, warning=FALSE, include=FALSE}
 rm(list=ls())
@@ -46,5 +43,121 @@ library(tidyverse)
 source("Workshop1.R")
 ```
 
+## Pipe data to summarize mean body mass for each species and island and create a boxplot of body mass by species, with the island variable mapped to fill
+```{r}
+mass_metrics = penguins %>%
+  group_by(species, island) %>%
+  summarise(
+    sample_size = n(),                                     # Count total individuals per category
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE),         # Calculate mean ignoring missing cells
+    sd_mass_g   = sd(body_mass_g, na.rm = TRUE)            # Standard deviation calculation
+  )
 
+print(mass_metrics) 
+
+penguins %>%
+  ggplot(aes(x = species, y = body_mass_g, fill = island)) +  #Plots with assigned x and y axis with islands as fill
+  geom_boxplot(na.rm = TRUE) + # Stops missing value trap
+  
+  #Add labels and theme
+  labs(
+    title = "Penguin Body Mass by Species and Island",
+    x = "Species",
+    y = "Body Mass (g)",
+    fill = "Island"
+  )  +
+  theme_minimal()
+```
+## Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
+```{r}
+# Pipe directly from aggregation to plotting with error bars
+mass_compare_plot = penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - sd_mass, 
+                    ymax = mean_mass + sd_mass), 
+                width = 0.2) +
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard deviation",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+mass_compare_plot
+
+```
+## Plot with standard error instead (always include table when presenting to others)
+```{r}
+mass_compare_plot2 = penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    se_mass = (sd_mass/ sqrt(n)), #calculate SE
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - se_mass, 
+                    ymax = mean_mass + se_mass), 
+                width = 0.2) +
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard error",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+mass_compare_plot2
+
+#Display summary table to help determine patterns
+mass_metrics = penguins %>%
+  group_by(species, island) %>%
+  summarise(
+    sample_size = n(),                                     # Count total individuals per category
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE),         # Calculate mean ignoring missing cells
+    sd_mass_g   = sd(body_mass_g, na.rm = TRUE)            # Standard deviation calculation
+  )
+
+print(mass_metrics)  
+
+
+# Data suggests Gentoo Penguins are much bigger than other species and Adelie penguins do not vary much by mass across the islands
+```
+
+# Saving Work 
+
+## Can save Tables as:
+
+### Universal CSV text file: Ideal for sharing data tables with collaborators who do not use R.
+
+### Native R Binary RDS object: Ideal for storing clean, complex intermediate tables for your own subsequent workshops. Saving as an RDS file preserves your exact vector configurations (such as custom categorical factor levels and numeric type definitions), meaning you never have to re-format column types when you reload the data next week.
+
+## Save Tables
+```{r}
+# add ../ to go up one level since .Rmd & .qmd will always default to saving in exact loaction
+
+# 1. Exporting our collapsed summary table as a universal flat text file
+write_csv(biological_signal, "../outputs/penguin_species_mass_summary.csv")
+
+# 2. Saving our cleaned morphological cohort table as a native R binary file
+saveRDS(clean_scientific_fields, "../outputs/clean_penguin_morphology_cohort.rds")
+```
+
+
+## Save Plot
+```{r}
+ggsave("outputs/mass_compare_plot2.png", 
+       plot = mass_compare_plot2, 
+       width = 120, height = 120, 
+       units = "mm", dpi = 300)
+
+```
 

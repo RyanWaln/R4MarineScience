@@ -10,16 +10,6 @@ output: html_document
 # Creating a Standalone Clone of a Repository
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-```{r}
-#install.packages("gert")
-#install.packages("usethis")
-```
-
-```{r}
-library("gert")
-library("usethis")
-```
-
 ## Github setup (run in console)
 ```{r}
 ##Enter into terminal if using USB
@@ -69,6 +59,193 @@ objects()
 
 #In global options: Uncheck the box that says: Re-restore .RData into workspace at startup and set to Never
 
+unlink("~/.RData") #Prevent old hanging code and values from screwing up current code
 ```
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Packages
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```{r}
+#install.packages("gert")
+#install.packages("usethis")
+#install.packages("here")
+#install.packages("tidyverse")
+#install.packages("readxl")
+```
+
+```{r}
+library("gert")
+library("usethis")
+library("here")
+library("tidyverse")
+library("readxl")
+```
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Importing Data
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
  
+## Importing Different File types
+```{r}
+# Practice Import A: Loading a standard comma-separated plain text file
+benthic_cover <- read_csv(here::here("data/reef_cover_log.csv"))
+
+# Practice Import B: Parsing a tab-separated telemetry instrument array string
+acoustic_stream <- read_tsv(here::here("data/acoustic_telemetry_stream.txt"))
+
+# Practice Import C: Targeting a specific sheet in a multi-tab Excel spreadsheet
+fisheries_annual <- read_excel(here::here("data/fish_catch_data.xlsx"), sheet = "Commercial_2026")
+
+```
+
+## Data not formated for R:
+```{r}
+# Read in mangrove_data
+mangrove_data <- read_csv(file = here::here("data/mangrove_survey_raw.csv"))
+
+```
+
+## Format data
+```{r}
+# Use args within read_csv to skip headers and declare missing flags
+mangrove_data <- read_csv(
+  here::here("data/mangrove_survey_raw.csv"),
+  skip = 5,   # Skip the first 5 lines of field notes
+  na = c(".", "NA", "9999", "ND", "blank"))  # Convert known text alts to true NA
+
+```
+
+##Tidyverse Tibble vs base R Datframes (tibble lets you spot errors)
+```{r}
+# Force a modern tibble to degrade into a legacy base R data frame structure
+benthic_cover_df <- as.data.frame(benthic_cover)
+# Print the old-style dataframe structure to view
+print(benthic_cover_df)
+# And compare with tibble alternative
+print(benthic_cover)
+
+```
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Wrangling out ecological signals using Palmer Penguins dataset
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```{r}
+#install.packages("palmerpenguins")
+library(palmerpenguins)
+data("penguins")
+
+# Examine the structure of the dataset - always do this when loading a new dataset!
+glimpse(penguins) # tidyverse version (from dplyr package)
+str(penguins) # base R version
+
+```
+
+## Types of varriables
+### <fct> (Factor): Categorical groupings with fixed levels (e.g., species containing Adelie, Chinstrap, and Gentoo).
+### <dbl> (Double): Continuous numeric measurements containing decimals (e.g., bill_length_mm).
+### <int> (Integer): Whole number variables, usually to track counts, (e.g., body_mass_g).
+
+```{r}
+# Generate an exploratory summary matrix
+summary(penguins)
+
+```
+
+```{r}
+# Vertically slice specific morphometric variables by explicit name
+morphology_metrics <- select(penguins, species, bill_length_mm, bill_depth_mm, body_mass_g)
+glimpse(morphology_metrics)
+
+# Retain a continuous block of attributes using the colon operator
+spatial_block <- select(penguins, species:island)
+
+# Discard logistics tracking attributes while preserving everything else using the minus sign
+clean_scientific_fields <- select(penguins, -year)
+
+
+```
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# The Pipe |> or %>% (used to prevent clutter in Enviornment tab by linking functions together)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Without a Pipe: You have to read the code "inside-out." You start in the middle, perform the mutate(), then wrap that in a filter(), and finally wrap that all in a select().
+
+## With a Pipe: You read from left to right, or top to bottom. You take your data, then you filter it, then you mutate it to create a new column, then you select the columns you need.
+
+## Example Syntax 
+
+### Typical 
+```{r}
+penguins_subset <- mutate(penguins, bill_ratio = bill_length_mm / bill_depth_mm)
+penguins_final <- filter(penguins_subset, species == "Adelie")
+```
+
+### Pipe
+```{r}
+penguins_final <- penguins |>
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) |>
+  filter(species == "Adelie")
+```
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Mutating Data
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Mutating is how we modify data
+```{r}
+# Calculate a new morphological ratio in our environment
+penguin_ratios <- penguins  |> 
+  mutate(body_mass_kg = body_mass_g / 1000,   # Convert grams to kilograms
+         bill_ratio = bill_length_mm / bill_depth_mm  # Bill ratio
+  )
+
+# View your newly engineered variables appended to the far-right columns
+glimpse(penguin_ratios)
+
+```
+
+# Missing Value Trap: NA values stop functions from working
+```{r}
+# Grouping our active memory penguins by species
+grouped_penguins <- group_by(penguins, species)
+
+# Notice that the table looks identical, but metadata notes 'Groups: species [3]'
+print(grouped_penguins)
+
+# Collapsing the buckets into explicit summary metrics
+species_mass_summary <- summarise(grouped_penguins,
+  mean_mass_g = mean(body_mass_g)
+)
+
+print(species_mass_summary)
+
+```
+
+```{r}
+# Overcoming the missing value trap using na.rm = TRUE
+biological_signal <- penguins %>%
+  group_by(species, sex) %>%
+  summarise(
+    sample_size = n(),                                     # Count total individuals per category
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE),         # Calculate mean ignoring missing cells
+    sd_mass_g   = sd(body_mass_g, na.rm = TRUE)            # Standard deviation calculation
+  )
+
+print(biological_signal) #penguins now grouped by species and sex for mean mass
+
+```
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Plotting
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Grammer of Graphics
+
+### The Data Layer: Declaring the source dataset table object.
+### The Aesthetic Mapping (aes): Defining which variables are mapped to structural axes, colors, shapes, or sizes.
+### The Geometric Layer (geom_...): Defining the visual shape that represents the numbers (e.g., points, bars, lines, or boxplots).
+
+
+# After sorting data in basic R script (this markdown is for testing purposes), use a .qmd file to render work into a professional HTML document
+
