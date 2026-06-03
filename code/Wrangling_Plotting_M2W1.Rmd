@@ -19,6 +19,7 @@ output: html_document
 library("gert")
 library("usethis")
 ```
+
 ## Github setup (run in console)
 ```{r}
 ##Get git credentials
@@ -26,6 +27,11 @@ credentials::git_credential_ask()
 
 ## see Git status
 usethis::git_sitrep()
+
+usethis::use_git_config(
+  user.name = "Ryan Waln",
+  user.email = "ryan.waln@aol.com"
+)
 
 ## create Personal Access Token
 #usethis::create_github_token() 
@@ -39,8 +45,6 @@ usethis::use_git()
 
 ##Enter into terminal if using USB
 #git config --global --add safe.directory "D:/Tri 2 2026/Techniques in Marine Science 1/Data_Science_in_R/R4MarineScience"
-
-
 
 ##Then restart R and run 
 usethis::git_sitrep() 
