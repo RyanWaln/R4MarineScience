@@ -20,35 +20,37 @@ editor_options:
 
 ## Introduction
 
-This file covers basic data wrangling techniques, including:
+This file is paired with a base R file to allow easy plotting of penguin data. Additional material covered includes:
 
--   
+- piping data to create plots
+- plotting graphs with error bars
+- saving tables and figures
 
 ```{r setup, include=FALSE}
-# Set options, housekeeping
+#  R Setup & housekeeping
 knitr::opts_chunk$set(
 	echo = FALSE,
 	include = TRUE,
 	message = FALSE,
 	warning = FALSE)
-```
-
-### Clear out environment
-```{r housekeeping, message=FALSE, warning=FALSE, include=FALSE}
 rm(list=ls())
+objects()
 ```
 
-### Load packages
+#### Load packages
+
 ```{r packages, message=FALSE, warning=FALSE, include=FALSE}
 library(tidyverse)
 ```
 
-### Source script
+#### Source script
+
 ```{r source-script1, message=FALSE, warning=FALSE, include=FALSE}
 source("Workshop1.R")
 ```
 
-## Pipe data to summarize mean body mass for each species and island and create a boxplot of body mass by species, with the island variable mapped to fill
+#### Pipe data to summarize mean body mass for each species and island and create a box plot of body mass by species, with the island variable mapped to fill
+
 ```{r}
 mass_metrics = penguins %>%
   group_by(species, island) %>%
@@ -74,7 +76,8 @@ penguins %>%
   theme_minimal()
 ```
 
-## Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
+#### Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
+
 ```{r}
 # Pipe directly from aggregation to plotting with error bars
 mass_compare_plot = penguins |>
@@ -100,7 +103,8 @@ mass_compare_plot
 
 ```
 
-## Plot with standard error instead (always include table when presenting to others)
+#### Plot with standard error instead (always include table when presenting to others)
+
 ```{r}
 mass_compare_plot2 = penguins |>
   group_by(species, island) |>
@@ -139,15 +143,16 @@ print(mass_metrics)
 # Data suggests Gentoo Penguins are much bigger than other species and Adelie penguins do not vary much by mass across the islands
 ```
 
-# Saving Work 
+## Saving Work
 
-## Can save Tables as:
+### Can save Tables as:
 
-### Universal CSV text file: Ideal for sharing data tables with collaborators who do not use R.
+#### Universal CSV text file: Ideal for sharing data tables with collaborators who do not use R.
 
-### Native R Binary RDS object: Ideal for storing clean, complex intermediate tables for your own subsequent workshops. Saving as an RDS file preserves your exact vector configurations (such as custom categorical factor levels and numeric type definitions), meaning you never have to re-format column types when you reload the data next week.
+#### Native R Binary RDS object: Ideal for storing clean, complex intermediate tables for your own subsequent workshops. Saving as an RDS file preserves your exact vector configurations (such as custom categorical factor levels and numeric type definitions), meaning you never have to re-format column types when you reload the data next week.
 
-## Save Tables
+### Save Tables
+
 ```{r}
 # add ../ to go up one level since .Rmd & .qmd will always default to saving in exact loaction
 
@@ -158,8 +163,8 @@ write_csv(biological_signal, "../outputs/penguin_species_mass_summary.csv")
 saveRDS(clean_scientific_fields, "../outputs/clean_penguin_morphology_cohort.rds")
 ```
 
+### Save Plot
 
-## Save Plot
 ```{r}
 ggsave("outputs/mass_compare_plot2.png", 
        plot = mass_compare_plot2, 
@@ -167,4 +172,3 @@ ggsave("outputs/mass_compare_plot2.png",
        units = "mm", dpi = 300)
 
 ```
-

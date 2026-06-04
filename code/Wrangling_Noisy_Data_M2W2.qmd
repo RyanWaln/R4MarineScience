@@ -1,5 +1,5 @@
 ---
-# MB5370: Introduction to Programming
+# MB5370: Data Science in R
 title: "Wrangling_Noisy_Data_M2W2"
 author: "Ryan Waln"
 format: html
@@ -10,10 +10,10 @@ editor: visual
 
 This file covers more advanced data wrangling techniques, including:
 
--   Pivoting data to move around rows and columns in tables
--   Separating and uniting tables or specific columns
--   Standardizing text and dates in data sets
--   Dealing with NA values
+- Pivoting data to move around rows and columns in tables
+- Separating and uniting tables or specific columns
+- Standardizing text and dates in data sets
+- Dealing with NA values
 
 ```{r}
 # R Setup & housekeeping
@@ -32,17 +32,17 @@ objects()
 library(tidyverse)
 ```
 
-Rules for tidy data:
+## Rules for tidy data:
 
-Each variable must have its own column.
+- Each variable must have its own column.
 
-Each observation must have its own row.
+- Each observation must have its own row.
 
-Each value must have its own cell.
+- Each value must have its own cell.
 
-ALWAYS: Put each dataset in a tibble and each variable in a column.
+- ALWAYS: Put each dataset in a tibble and each variable in a column.
 
-## Example of working w/ tidy data
+#### Example of working with tidy data
 
 ```{r}
 # Compute rate per 10,000 (existing data set)
@@ -75,7 +75,7 @@ ggplot(table1, aes(year, cases)) +
 
 ```
 
-## Pivoting data: Lengthening datasets
+## Pivoting data: Lengthening data sets
 
 ```{r}
 # Usually used to fix when one variable is spread across multiple columns or one observation across multiple rows
@@ -119,7 +119,7 @@ billboard |>
 
 ```
 
-### Pivoting: longer example
+#### Pivoting: longer example
 
 ```{r}
 # Create dataset "df" w/3 varriables
@@ -141,7 +141,7 @@ df |>
 
 ```
 
-## Pivoting data: widening datasets (decrease rows & increase columns)
+## Pivoting data: widening data sets
 
 ```{r}
 cms_patient_experience  #load buit in data set expressing patient satisfaction w/ health organizations
@@ -163,8 +163,6 @@ cms_patient_experience |>
 
 Code below still results in multiple rows for each organization since we still need to tell pivot_wider() which column or columns have values that uniquely identify each row
 
-cms_patient_experience \|\> pivot_wider( names_from = measure_cd, values_from = prf_rate )
-
 ```{r}
 # add line to specify organizations
 cms_patient_experience |> 
@@ -176,7 +174,7 @@ cms_patient_experience |>
 
 ```
 
-### Widening datasets example:
+#### Widening data sets example:
 
 ```{r}
 # Create data set with blood pressure measurments from 2 patients
@@ -199,7 +197,7 @@ df |>
 
 ## Pivoting Data: Palmer Penguins
 
-### Lengthening data
+#### Lengthening data
 
 ```{r}
 library(palmerpenguins)
@@ -234,7 +232,7 @@ penguins_long |>
 
 ```
 
-### Widening data (can use to present summary statistics as a cross-tabulated matrix. It is much easier for a reader to parse a wide table than a long, repetitive list).
+#### Widening data (can use to present summary statistics as a cross-tabulated matrix. It is much easier for a reader to parse a wide table than a long, repetitive list).
 
 ```{r}
 # Calculate mean body mass for each species on each island 
@@ -288,7 +286,7 @@ table5 %>%
 
 Before we can merge datasets or plot timelines, we must standardize our text strings and date-times. The tidyverse includes two specialized packages for this: stringr for text and lubridate for dates.
 
-### Using Stringr to standardize text
+#### Using Stringr to standardize text
 
 ```{r}
 library(tidyverse)
@@ -314,7 +312,7 @@ print(clean_sites)
 
 ```
 
-### Using Lubridate to standardize Dates
+#### Using Lubridate to standardize Dates
 
 ```{r}
 library(lubridate)
@@ -326,9 +324,6 @@ date_2 <- ymd("2026-12-25") # if year is listed first
 # R now recognizes these as identical Date objects
 date_1 == date_2
 
-```
-
-```{r}
 # A tibble of raw sensor data with a messy character timestamp
 sensor_data <- tibble(
   raw_time = c("14-05-2026 08:30:00", "14-05-2026 08:45:00", "14-05-2026 09:00:00"),
@@ -344,9 +339,9 @@ sensor_clean <- sensor_data |>
 print(sensor_clean)
 ```
 
-## Joining tables based on a a common identifying column or key
+## Joining tables
 
-### Set up 2 tables
+#### Set up 2 tables
 
 ```{r}
 # Table 1: Biological observation data
@@ -367,7 +362,7 @@ print(observations)
 print(site_metadata)
 ```
 
-### left_join(): keeps all the rows from your left table (observations) and matches data from your right table (site_metadata) wherever the key matches. If a match is missing, it fills the gaps with NA.
+#### left_join(): keeps all the rows from your left table (observations) and matches data from your right table (site_metadata) wherever the key matches. If a match is missing, it fills the gaps with NA.
 
 ```{r}
 # Joining metadata to our observations
@@ -378,7 +373,7 @@ print(joined_data)
 
 ```
 
-### inner_join(): only keeps rows that have complete matches in both tables.
+#### inner_join(): only keeps rows that have complete matches in both tables.
 
 ```{r}
 matched_data <- observations |>
@@ -387,7 +382,7 @@ matched_data <- observations |>
 print(matched_data)
 ```
 
-### anti_join(): filters your left table to only show rows that do not have a match in the right table (run after left join if you end up with NA values)
+#### anti_join(): filters your left table to only show rows that do not have a match in the right table (run after left join if you end up with NA values)
 
 ```{r}
 # Which observations are missing from our metadata dictionary?
@@ -399,7 +394,7 @@ print(missing_context)
 
 ## Dealing with NA Values
 
-### Converting legacy errors with na_if()
+#### Converting legacy errors with na_if()
 
 ```{r}
  #Raw data from an old temperature logger
@@ -415,7 +410,7 @@ print(fixed_logger)
 
 ```
 
-### Replacing NA values with coalesce()
+#### Replacing NA values with coalesce()
 
 ```{r}
 # Simulate some count data
@@ -433,7 +428,7 @@ print(shark_fixed)
 
 Important: coalesce() is incredibly powerful. If you have two columns, like a primary_sensor and a backup_sensor, coalesce(primary_sensor, backup_sensor) will automatically use the primary reading, but seamlessly fill in the gaps with the backup reading if the primary had failed!)
 
-### NaN (not a number), often happens when calculating metrics like Catch Per Unit Effort (CPUE) for a site where both the catch and the effort were zero and the function divided by zero.
+#### NaN (not a number), often happens when calculating metrics like Catch Per Unit Effort (CPUE) for a site where both the catch and the effort were zero and the function divided by zero.
 
 ```{r}
 cpue_data <- tibble(
@@ -457,7 +452,7 @@ print(cpue_calc)
 
 ```
 
-### Implicit missing values: complete()
+#### Implicit missing values: complete()
 
 ```{r}
 # Important in ecology to know where species are not found, however tibbles don't typically include rows for zero catch data
@@ -475,7 +470,7 @@ full_catch_matrix <- raw_catch |>
 print(full_catch_matrix)
 ```
 
-### The nuclear option: drop_na(). May have to remove entire row if NA value is core response variable
+#### The nuclear option: drop_na(). May have to remove entire row if NA value is core response variable
 
 ```{r}
 sensor_log <- tibble(

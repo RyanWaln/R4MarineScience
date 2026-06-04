@@ -1,69 +1,46 @@
-
 # MB5370: Introduction to Programming
 #title: "Wrangling_Plotting_M2W1"
 #author: "Ryan Waln"
 #date: "2026-06-02"
 #output: html_document
 
-# Introduction
+  # Introduction
 
-##This file covers basic data wrangling techniques, including:
-## -
+# This file covers basic data wrangling techniques, including:
+# - importing data 
+# - formatting data for R 
+# - Tidyverse tibbles vs base R data frames
+# - piping 
+# - mutating data 
+# - basic NA value handling
 
-# R Setup & housekeeping
+  # R Setup & housekeeping
 rm(list=ls())
 objects()
 
 
-# Creating a Standalone Clone of a Repository
+  # Creating a Standalone Clone of a Repository
  
- ## Github setup (run in console)
-  
-##Enter into terminal if using USB
-#git config --global --add safe.directory "D:/Tri 2 2026/Techniques in Marine Science 1/Data_Science_in_R/R4MarineScience"
-
-##Then restart R and run 
-#usethis::git_sitrep() 
-
-##Get git credentials
+## Get git credentials
 #credentials::git_credential_ask()  
 
 ## see Git status
 #usethis::git_sitrep()
 
-#usethis::use_git_config(
- # user.name = "Ryan Waln",
-#  user.email = "ryan.waln@aol.com"
-#)
-
-## create Personal Access Token
-#usethis::create_github_token() 
-
-## prompt to insert PAT
-#gitcreds::gitcreds_set() 
-
-#gert::git_remote_remove("origin") #severs connection to original repository to allow storage in own GitHub after cloning
-
-##track current project locally (can also use Tools > Project Options … > Git/SVN, and set to Git)
-## or run  git init in terminal
-#usethis::use_git() 
-
-#usethis::use_github() # Have github start tracking files
+## severs connection to original repository to allow storage in own GitHub after cloning
+#gert::git_remote_remove("origin") 
 
 
-
-  # Creating a Standalone Clone of a Repository
-  
   # Housekeeping
   
-## Inventory every active object currently residing in session RAM
+# Inventory every active object currently residing in session RAM
 objects()
-## Purge global environment
+# Purge global environment
 rm(list = ls())
 # Confirm that global session memory now completely vacant
 objects()
 
-#In global options: Uncheck the box that says: Re-restore .RData into workspace at startup and set to Never
+# In global options: Uncheck the box that says: Re-restore .RData into workspace at startup and set to Never
 
 unlink("~/.RData") #Prevent old hanging code and values from screwing up current code
 
@@ -88,7 +65,7 @@ library("readxl")
 
   # Importing Data
  
-  ## Importing Different File types
+# Importing Different File types
  
 # Practice Import A: Loading a standard comma-separated plain text file
 benthic_cover <- read_csv(here::here("data/reef_cover_log.csv"))
@@ -101,14 +78,12 @@ fisheries_annual <- read_excel(here::here("data/fish_catch_data.xlsx"), sheet = 
 
 
 
-## Data not formated for R:
+  # Data not formated for R:
 
 # Read in mangrove_data
 mangrove_data <- read_csv(file = here::here("data/mangrove_survey_raw.csv"))
 
-
-
-## Format data
+# Format data
 
 # Use args within read_csv to skip headers and declare missing flags
 mangrove_data <- read_csv(
@@ -118,7 +93,7 @@ mangrove_data <- read_csv(
 
 
 
-##Tidyverse Tibble vs base R Datframes (tibble lets you spot errors)
+  #Tidyverse Tibble vs base R Datframes (tibble lets you spot errors)
 
 # Force a modern tibble to degrade into a legacy base R data frame structure
 benthic_cover_df <- as.data.frame(benthic_cover)
@@ -130,8 +105,6 @@ print(benthic_cover)
 
   # Wrangling out ecological signals using Palmer Penguins dataset
   
-  
-  
 #install.packages("palmerpenguins")
 library(palmerpenguins)
 data("penguins")
@@ -142,10 +115,10 @@ str(penguins) # base R version
 
 
 
-## Types of varriables
-### <fct> (Factor): Categorical groupings with fixed levels (e.g., species containing Adelie, Chinstrap, and Gentoo).
-### <dbl> (Double): Continuous numeric measurements containing decimals (e.g., bill_length_mm).
-### <int> (Integer): Whole number variables, usually to track counts, (e.g., body_mass_g).
+  # Types of varriables
+# <fct> (Factor): Categorical groupings with fixed levels (e.g., species containing Adelie, Chinstrap, and Gentoo).
+# <dbl> (Double): Continuous numeric measurements containing decimals (e.g., bill_length_mm).
+# <int> (Integer): Whole number variables, usually to track counts, (e.g., body_mass_g).
 
 # Generate an exploratory summary matrix
 summary(penguins)
@@ -164,19 +137,18 @@ clean_scientific_fields <- select(penguins, -year)
 
   # The Pipe |> or %>% (used to prevent clutter in Enviornment tab by linking functions together)
   
-  ## Without a Pipe: You have to read the code "inside-out." You start in the middle, perform the mutate(), then wrap that in a filter(), and finally wrap that all in a select().
+# Without a Pipe: You have to read the code "inside-out." You start in the middle, perform the mutate(), then wrap that in a filter(), and finally wrap that all in a select().
   
-  ## With a Pipe: You read from left to right, or top to bottom. You take your data, then you filter it, then you mutate it to create a new column, then you select the columns you need.
+# With a Pipe: You read from left to right, or top to bottom. You take your data, then you filter it, then you mutate it to create a new column, then you select the columns you need.
   
-  ## Example Syntax 
+# Example Syntax 
   
-  ### Typical 
+  # Typical 
  
 penguins_subset <- mutate(penguins, bill_ratio = bill_length_mm / bill_depth_mm)
 penguins_final <- filter(penguins_subset, species == "Adelie")
 
-
-### Pipe
+  # Pipe
 
 penguins_final <- penguins |>
   mutate(bill_ratio = bill_length_mm / bill_depth_mm) |>
@@ -186,7 +158,7 @@ penguins_final <- penguins |>
 
   # Mutating Data
   
-  ## Mutating is how we modify data
+# Mutating is how we modify data
   
 # Calculate a new morphological ratio in our environment
 penguin_ratios <- penguins  |> 
@@ -199,7 +171,7 @@ glimpse(penguin_ratios)
 
 
 
-# Missing Value Trap: NA values stop functions from working
+    # Missing Value Trap: NA values stop functions from working
 
 # Grouping our active memory penguins by species
 grouped_penguins <- group_by(penguins, species)
@@ -231,11 +203,11 @@ print(biological_signal) #penguins now grouped by species and sex for mean mass
 
   # Plotting
  
-  ## Grammer of Graphics
+  # Grammer of Graphics
   
-  ### The Data Layer: Declaring the source dataset table object.
-  ### The Aesthetic Mapping (aes): Defining which variables are mapped to structural axes, colors, shapes, or sizes.
-  ### The Geometric Layer (geom_...): Defining the visual shape that represents the numbers (e.g., points, bars, lines, or boxplots).
+  ## The Data Layer: Declaring the source dataset table object.
+  ## The Aesthetic Mapping (aes): Defining which variables are mapped to structural axes, colors, shapes, or sizes.
+  ## The Geometric Layer (geom_...): Defining the visual shape that represents the numbers (e.g., points, bars, lines, or boxplots).
   
 # After sorting data in basic R script, use a .qmd file to render work into a professional HTML document
 
