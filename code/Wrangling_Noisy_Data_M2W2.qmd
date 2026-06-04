@@ -413,3 +413,115 @@ print(shark_fixed)
 
 ```
 
+Important: coalesce() is incredibly powerful. If you have two columns, like a primary_sensor and a backup_sensor, coalesce(primary_sensor, backup_sensor) will automatically use the primary reading, but seamlessly fill in the gaps with the backup reading if the primary had failed!)
+
+### NaN (not a number), often happens when calculating metrics like Catch Per Unit Effort (CPUE) for a site where both the catch and the effort were zero and the function divided by zero.
+
+```{r}
+cpue_data <- tibble(
+  site = c("Bay_1", "Bay_2"),
+  catch = c(10, 0),
+  effort_hours = c(2, 0))
+
+# Calculating CPUE (catch / effort)
+cpue_calc <- cpue_data |>
+  mutate(
+    cpue = catch / effort_hours)
+
+print(cpue_calc)
+
+# Added line to check for NaN values
+cpue_calc <- cpue_data |>
+  mutate( is.nan(catch/ effort_hours), cpue = NA_real_,
+    cpue = catch / effort_hours)
+
+print(cpue_calc)
+
+```
+### Implicit missing values: complete()
+
+```{r}
+# Important in ecology to know where species are not found, however tibbles don't typically include rows for zero catch data
+raw_catch <- tibble(
+  site = c("Reef_1", "Reef_1", "Reef_2"),
+  species = c("Pmaculatus", "Pleopardus", "Pmaculatus"),
+  count = c(5, 2, 8))
+
+print(raw_catch)
+
+# Force inclusion of hidden zero-catch data (imo)
+full_catch_matrix <- raw_catch |>
+  complete(site, species, fill = list(count = 0))
+
+print(full_catch_matrix)
+```
+
+### The nuclear option: drop_na(). May have to remove entire row if NA value is core response variable
+
+```{r}
+sensor_log <- tibble(
+  day = 1:4,
+  salinity = c(35.2, 35.1, NA, 35.3)
+)
+print(sensor_log)
+
+# Remove any row where salinity is missing
+clean_log <- sensor_log |>
+  drop_na(salinity)
+
+print(clean_log)
+```
+
+## Example problem: Penguins, Pivots, and Relational Data
+
+You have the clean penguins dataset, but a colleague has just emailed you a supplementary metadata file containing the GPS coordinates and the date the primary weather stations were installed on each island.
+
+```{r}
+# Make sure packages are loaded
+library(tidyverse)
+library(palmerpenguins)
+
+# The messy metadata provided by your colleague
+island_metadata <- tibble(
+  island_name = c(" biscoe", "Dream ", "Torgersen"),
+  station_install = c("15/01/2003", "22-03-2004", "05/11/2001"),
+  latitude = c(-64.81, -64.73, -64.76)
+)
+
+print(island_metadata)
+
+
+```
+```{r}
+# Using mutate(), stringr, and lubridate, fix the island_name column so that it perfectly matches the island column in the penguins dataset Then, convert the station_install column into a proper Date object.
+
+clean_metadata <- island_metadata |>
+  mutate(
+    island_name = str_trim(island_name), # Remove leading/trailing whitespace
+    island_name = str_to_title(island_name), # Convert to title case
+    station_install = dmy(station_install) # Convert to Date object
+  )
+
+print(clean_metadata)
+```
+```{r}
+# Use left_join() to attach your clean_metadata to the main penguins dataset. 
+penguins_spatial <- penguins |>
+  left_join(clean_metadata, by = join_by(island == island_name))
+
+head(penguins_spatial)
+```
+
+A collaborator has asked for a clean, publication-ready table showing the maximum body mass recorded for each species, separated by island
+
+```{r}
+penguin_summary = penguins_spatial |>
+  drop_na(body_mass_g) |>    #Drop missing values in the body_mass_g column
+  group_by(species, island) |>   #Group by species and island
+  summarise(max_mass = max(body_mass_g), .groups = "drop") |>   #Summarise data to find maximum body mass
+  pivot_wider(names_from = island, values_from = max_mass)   #Pivot dataset wider so species form the rows, and islands form the columns.
+
+
+print(penguin_summary)
+```
+
