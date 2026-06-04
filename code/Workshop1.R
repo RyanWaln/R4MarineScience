@@ -5,6 +5,15 @@
 #date: "2026-06-02"
 #output: html_document
 
+# Introduction
+
+##This file covers basic data wrangling techniques, including:
+## -
+
+# R Setup & housekeeping
+rm(list=ls())
+objects()
+
 
 # Creating a Standalone Clone of a Repository
  

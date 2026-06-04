@@ -6,7 +6,14 @@ format: html
 editor: visual
 ---
 
-## Introduction: this
+## Introduction
+
+This file covers more advanced data wrangling techniques, including:
+
+-   Pivoting data to move around rows and columns in tables
+-   Separating and uniting tables or specific columns
+-   Standardizing text and dates in data sets
+-   Dealing with NA values
 
 ```{r}
 # R Setup & housekeeping
@@ -306,7 +313,9 @@ print(clean_sites)
 
 
 ```
+
 ### Using Lubridate to standardize Dates
+
 ```{r}
 library(lubridate)
 
@@ -334,9 +343,11 @@ sensor_clean <- sensor_data |>
 
 print(sensor_clean)
 ```
+
 ## Joining tables based on a a common identifying column or key
 
 ### Set up 2 tables
+
 ```{r}
 # Table 1: Biological observation data
 observations <- tibble(
@@ -366,7 +377,9 @@ joined_data <- observations |>
 print(joined_data)
 
 ```
+
 ### inner_join(): only keeps rows that have complete matches in both tables.
+
 ```{r}
 matched_data <- observations |>
   inner_join(site_metadata, by = join_by(site_code))
@@ -375,6 +388,7 @@ print(matched_data)
 ```
 
 ### anti_join(): filters your left table to only show rows that do not have a match in the right table (run after left join if you end up with NA values)
+
 ```{r}
 # Which observations are missing from our metadata dictionary?
 missing_context <- observations |>
@@ -382,9 +396,11 @@ missing_context <- observations |>
 
 print(missing_context)
 ```
+
 ## Dealing with NA Values
 
 ### Converting legacy errors with na_if()
+
 ```{r}
  #Raw data from an old temperature logger
 logger_data <- tibble(
@@ -398,7 +414,9 @@ fixed_logger <- logger_data |>
 print(fixed_logger)
 
 ```
+
 ### Replacing NA values with coalesce()
+
 ```{r}
 # Simulate some count data
 shark_counts <- tibble(
@@ -438,6 +456,7 @@ cpue_calc <- cpue_data |>
 print(cpue_calc)
 
 ```
+
 ### Implicit missing values: complete()
 
 ```{r}
@@ -492,6 +511,7 @@ print(island_metadata)
 
 
 ```
+
 ```{r}
 # Using mutate(), stringr, and lubridate, fix the island_name column so that it perfectly matches the island column in the penguins dataset Then, convert the station_install column into a proper Date object.
 
@@ -504,6 +524,7 @@ clean_metadata <- island_metadata |>
 
 print(clean_metadata)
 ```
+
 ```{r}
 # Use left_join() to attach your clean_metadata to the main penguins dataset. 
 penguins_spatial <- penguins |>
@@ -524,4 +545,3 @@ penguin_summary = penguins_spatial |>
 
 print(penguin_summary)
 ```
-

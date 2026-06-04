@@ -68,6 +68,7 @@ penguins %>%
   )  +
   theme_minimal()
 ```
+
 ## Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
 ```{r}
 # Pipe directly from aggregation to plotting with error bars
@@ -93,6 +94,7 @@ mass_compare_plot = penguins |>
 mass_compare_plot
 
 ```
+
 ## Plot with standard error instead (always include table when presenting to others)
 ```{r}
 mass_compare_plot2 = penguins |>

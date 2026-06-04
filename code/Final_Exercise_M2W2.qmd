@@ -1,0 +1,29 @@
+---
+# MB5370: Introduction to Programming
+title: "Wrangling_Noisy_Data_M2W2"
+author: "Ryan Waln"
+format: html
+editor: visual
+---
+
+## Introduction
+This file is used to wrangle messy data on Ross River estuary fish surveys and produce final clean tables and figures
+
+```{r}
+# R Setup & housekeeping
+knitr::opts_chunk$set(
+	echo = FALSE,
+	include = TRUE,
+	message = FALSE,
+	warning = FALSE)
+
+rm(list=ls())
+objects()
+```
+
+## Packages
+```{r}
+library("tidyverse")
+library("readxl") 
+```
+
