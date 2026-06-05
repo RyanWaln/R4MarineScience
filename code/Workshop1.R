@@ -78,7 +78,7 @@ fisheries_annual <- read_excel(here::here("data/fish_catch_data.xlsx"), sheet = 
 
 
 
-  # Data not formated for R:
+  # Data not formatted for R:
 
 # Read in mangrove_data
 mangrove_data <- read_csv(file = here::here("data/mangrove_survey_raw.csv"))
@@ -109,13 +109,13 @@ print(benthic_cover)
 library(palmerpenguins)
 data("penguins")
 
-# Examine the structure of the dataset - always do this when loading a new dataset!
+# Examine the structure of the data set - always do this when loading a new dataset!
 glimpse(penguins) # tidyverse version (from dplyr package)
 str(penguins) # base R version
 
 
 
-  # Types of varriables
+  # Types of variables
 # <fct> (Factor): Categorical groupings with fixed levels (e.g., species containing Adelie, Chinstrap, and Gentoo).
 # <dbl> (Double): Continuous numeric measurements containing decimals (e.g., bill_length_mm).
 # <int> (Integer): Whole number variables, usually to track counts, (e.g., body_mass_g).

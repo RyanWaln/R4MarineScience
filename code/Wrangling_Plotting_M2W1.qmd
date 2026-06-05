@@ -62,7 +62,7 @@ mass_metrics = penguins %>%
 
 print(mass_metrics) 
 
-penguins %>%
+penguins |>
   ggplot(aes(x = species, y = body_mass_g, fill = island)) +  #Plots with assigned x and y axis with islands as fill
   geom_boxplot(na.rm = TRUE) + # Stops missing value trap
   
@@ -74,6 +74,8 @@ penguins %>%
     fill = "Island"
   )  +
   theme_minimal()
+
+
 ```
 
 #### Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
@@ -149,7 +151,7 @@ print(mass_metrics)
 
 #### Universal CSV text file: Ideal for sharing data tables with collaborators who do not use R.
 
-#### Native R Binary RDS object: Ideal for storing clean, complex intermediate tables for your own subsequent workshops. Saving as an RDS file preserves your exact vector configurations (such as custom categorical factor levels and numeric type definitions), meaning you never have to re-format column types when you reload the data next week.
+#### Native R Binary RDS object: Saving as an RDS file preserves your exact vector configurations (such as custom categorical factor levels and numeric type definitions), meaning you never have to re-format column types when you reload the data next time you work on it.
 
 ### Save Tables
 
