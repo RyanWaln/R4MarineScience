@@ -29,7 +29,7 @@ This file is paired with a base R file to allow easy plotting of penguin data. A
 ```{r setup, include=FALSE}
 #  R Setup & housekeeping
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	include = TRUE,
 	message = FALSE,
 	warning = FALSE)
