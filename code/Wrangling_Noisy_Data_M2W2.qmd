@@ -134,8 +134,8 @@ df <- tribble(
 df |> 
   pivot_longer(
     cols = bp1:bp2,
-    names_to = "measurement",
-    values_to = "value"
+    names_to = "measurement",  
+    values_to = "value"    
   )
 
 
