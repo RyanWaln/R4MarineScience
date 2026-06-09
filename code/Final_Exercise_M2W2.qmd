@@ -39,9 +39,10 @@ species_dictionary <- read_csv(here::here("data", "workshop_2","species_dictiona
 catch_log          <- read_excel(here::here("data", "workshop_2", "estuary_catch_log.xlsx"))
 ```
 
-## Data Cleaning 
+## Data Cleaning
 
 #### Combine excel tabs on catch log into one data frame
+
 ```{r}
 path <- here::here("data", "workshop_2", "estuary_catch_log.xlsx")
 
@@ -53,3 +54,4 @@ catch_data <- excel_sheets(path) |>   # retrieves all sheet names from the file.
 glimpse(catch_data)
 ```
 
+#### Standardize text with String
