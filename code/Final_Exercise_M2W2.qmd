@@ -27,4 +27,29 @@ objects()
 ```{r}
 library("tidyverse")
 library("readxl") 
+library("dplyr")
 ```
+
+## Read in Data
+
+```{r}
+estuary_metadata   <- read_csv(here::here("data", "workshop_2", "estuary_metadata.csv"))
+estuary_sonde_data <- read_csv(here::here("data", "workshop_2","estuary_sonde_data.csv"))
+species_dictionary <- read_csv(here::here("data", "workshop_2","species_dictionary.csv"))
+catch_log          <- read_excel(here::here("data", "workshop_2", "estuary_catch_log.xlsx"))
+```
+
+## Data Cleaning 
+
+#### Combine excel tabs on catch log into one data frame
+```{r}
+path <- here::here("data", "workshop_2", "estuary_catch_log.xlsx")
+
+catch_data <- excel_sheets(path) |>   # retrieves all sheet names from the file.
+  set_names() |>                      # names the list by sheet name so map() can pass it cleanly.
+  map(\(sheet) read_excel(path = path, sheet = sheet)) |>   # reads each sheet into a data frame 
+  list_rbind()  # purr function that row-binds the list of data frames into one
+
+glimpse(catch_data)
+```
+
