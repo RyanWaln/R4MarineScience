@@ -1,1 +1,27 @@
-Wrangling_Plotting_M2W1.html
+# Extensions to ignore - toggle on and off as required
+# *.html
+*.png
+*.jpg
+*.jpeg
+# *.eps
+# *.pdf
+# *.bmp
+# *.svg
+# *.tiff
+*.Rproj
+
+# Folders to ignore
+archive/
+output/
+test/
+figures/
+libs/
+
+# Keywords to ignore
+*archive
+.httr-oauth
+.quarto
+.Rproj.user
+.Rproj.user
+.Rproj.user
+.Rproj.user

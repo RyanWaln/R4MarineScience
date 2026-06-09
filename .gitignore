@@ -6,7 +6,7 @@
 .DS_Store
 
 # Extensions to ignore - toggle on and off as required
-# *.html
+*.html
 *.png
 *.jpg
 *.jpeg
@@ -27,6 +27,12 @@ figures/
 *archive
 .httr-oauth
 .quarto
+.Rproj.user
+.Rproj.user
+.Rproj.user
+.Rproj.user
+.Rproj.user
+.Rproj.user
 .Rproj.user
 .Rproj.user
 .Rproj.user
