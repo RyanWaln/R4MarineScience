@@ -10,6 +10,8 @@ editor: visual
 
 This file is used to wrangle messy data on Ross River estuary fish surveys and produce final clean tables and figures
 
+#### Housekeeping
+
 ```{r}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
@@ -22,7 +24,7 @@ rm(list=ls())
 objects()
 ```
 
-## Packages
+#### Packages
 
 ```{r}
 library("tidyverse")
@@ -30,28 +32,128 @@ library("readxl")
 library("dplyr")
 ```
 
-## Read in Data
+## Read in data 
 
 ```{r}
 estuary_metadata   <- read_csv(here::here("data", "workshop_2", "estuary_metadata.csv"))
 estuary_sonde_data <- read_csv(here::here("data", "workshop_2","estuary_sonde_data.csv"))
 species_dictionary <- read_csv(here::here("data", "workshop_2","species_dictionary.csv"))
-catch_log          <- read_excel(here::here("data", "workshop_2", "estuary_catch_log.xlsx"))
 ```
+
+#### Check site locations
+
+```{r}
+estuary_metadata
+head(estuary_metadata)
+glimpse(estuary_metadata)
+str(estuary_metadata)
+```
+
+#### Check sensor data
+
+```{r}
+estuary_sonde_data
+head(estuary_sonde_data)
+glimpse(estuary_sonde_data)
+str(estuary_sonde_data)
+```
+
+#### Check species dictionary
+
+```{r}
+species_dictionary
+head(species_dictionary)
+glimpse(species_dictionary)
+str(species_dictionary)
+```
+
+
+#### Combine excel tabs on catch log into one data frame so all sheets load
+
+```{r}
+catch1 <- read_excel(here::here("data/workshop_2/estuary_catch_log.xlsx"), sheet = 1)
+catch2 <- read_excel("../data/workshop_2/estuary_catch_log.xlsx", sheet = 2)
+catch3 <- read_excel("../data/workshop_2/estuary_catch_log.xlsx", sheet = 3)
+catch4 <- read_excel("../data/workshop_2/estuary_catch_log.xlsx", sheet = 4)
+
+catch_data <- bind_rows(catch1, catch2, catch3, catch4)
+# Clean up the environment
+rm(catch1, catch2, catch3, catch4) # Clean up the environment
+
+# Glimpse data
+catch_data
+head(catch_data)
+glimpse(catch_data)
+str(catch_data)
+```
+
+#### Alternative method for loading files and combining sheets
+
+```{r}
+file_path <- "../data/workshop_2/estuary_catch_log.xlsx"
+catch_data2 <- excel_sheets(file_path) |>
+  map_dfr(~read_excel(path = file_path, sheet = .x))
+
+
+catch_data2
+head(catch_data2)
+glimpse(catch_data2)
+str(catch_data2)
+```
+
+#### Check Species and Site Names (no scientific names & inconsistent syntax)
+
+```{r}
+catch_data |> 
+  distinct(site)
+
+catch_data |> 
+  distinct(species)
+```
+
 
 ## Data Cleaning
 
-#### Combine excel tabs on catch log into one data frame
+#### Change common names to scientific names
 
 ```{r}
-path <- here::here("data", "workshop_2", "estuary_catch_log.xlsx")
 
-catch_data <- excel_sheets(path) |>   # retrieves all sheet names from the file.
-  set_names() |>                      # names the list by sheet name so map() can pass it cleanly.
-  map(\(sheet) read_excel(path = path, sheet = sheet)) |>   # reads each sheet into a data frame 
-  list_rbind()  # purr function that row-binds the list of data frames into one
-
-glimpse(catch_data)
 ```
 
 #### Standardize text with String
+
+```{r}
+clean_catch_log <- catch_data |>
+  mutate(
+    # 1. Convert everything to lowercase
+    species = str_to_lower(species),
+    # 2. Trim any leading or trailing whitespace (invisible spaces at the ends)
+    species = str_trim(site_clean),
+    # 3. Replace any spaces with underscores
+    species = str_replace_all(site_clean, pattern = " ", replacement = "_")
+  )
+
+print(clean_sites)
+```
+
+#### Formate dates in Sonde Dataset 
+
+```{r}
+
+```
+
+#### Convert legacy errors to NA values
+
+```{r}
+
+```
+
+## Put Data into Cohesive Format
+
+```{r}
+
+```
+
+
+
+
