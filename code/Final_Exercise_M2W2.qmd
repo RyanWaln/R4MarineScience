@@ -173,7 +173,7 @@ print(clean_catch_log)
 
 ```
 
-#### Formate dates and NA values in Sonde Dataset 
+#### Format dates and NA values in Sonde Dataset 
 
 ```{r}
 clean_sensor_data = estuary_sonde_data |>
@@ -248,6 +248,7 @@ final_catch_data |>
 ```{r}
 sal_sum <- 
   final_catch_data |>
+  mutate(zone = factor(zone, levels = c("Marine", "Downstream", "Middle", "Upstream"))) |>
   group_by(zone) |>
   summarise(
     se_salinity = sd(mean_salinity) / sqrt(n()),
@@ -280,7 +281,8 @@ sal_sum |>
 
 #### Calculate Fish Count SE 
 ```{r}
-fish_stats <- final_catch_data |>
+fish_stats <- final_catch_data |> 
+ mutate(zone = factor(zone, levels = c("Marine", "Downstream", "Middle", "Upstream"))) |>
   group_by(zone, scientific_name) |>
   summarise(
     mean_catch = mean(count),
