@@ -1,19 +1,31 @@
 ---
-# MB5370: Data Science in R
-title: "Wrangling_Noisy_Data_M2W2"
+title: "R for Marine Science Workshop 2"
 author: "Ryan Waln"
-format: html
-editor: visual
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Introduction
 
 This file covers more advanced data wrangling techniques, including:
 
-- Pivoting data to move around rows and columns in tables
-- Separating and uniting tables or specific columns
-- Standardizing text and dates in data sets
-- Dealing with NA values
+-   Pivoting data to move around rows and columns in tables
+-   Separating and uniting tables or specific columns
+-   Standardizing text and dates in data sets
+-   Dealing with NA values
 
 ```{r}
 # R Setup & housekeeping
@@ -34,13 +46,13 @@ library(tidyverse)
 
 ## Rules for tidy data:
 
-- Each variable must have its own column.
+-   Each variable must have its own column.
 
-- Each observation must have its own row.
+-   Each observation must have its own row.
 
-- Each value must have its own cell.
+-   Each value must have its own cell.
 
-- ALWAYS: Put each dataset in a tibble and each variable in a column.
+-   ALWAYS: Put each dataset in a tibble and each variable in a column.
 
 #### Example of working with tidy data
 

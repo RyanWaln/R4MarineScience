@@ -1,9 +1,21 @@
 ---
-# MB5370: Introduction to Programming
-title: "Wrangling_Noisy_Data_M2W2"
+title: "Workshop 2 Final Question"
 author: "Ryan Waln"
-format: html
-editor: visual
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Introduction
@@ -137,22 +149,6 @@ mutate(
 
 print(catch_log)
 
-
-#Standardize common names on species dictionary to join with species on catch data later
-#DONT NEED
-species_dictionary <- species_dictionary |>
-  mutate(
-    # 1. Convert everything to lowercase and replace old column 
-    common_name = str_to_lower(common_name),
-    # 2. Trim any leading or trailing whitespace (invisible spaces at the ends)
-    common_name = str_trim(common_name),
-    # 3. Replace any spaces with underscores
-    common_name = str_replace_all(common_name, pattern = " ", replacement = "_")
-  )
-
-print(species_dictionary)
-
-
 # Standardize site names on metadata to join with site on catch log later 
 estuary_metadata <- estuary_metadata |>
   mutate(
@@ -231,8 +227,6 @@ final_catch_data
 
 #### Add rows for when no individuals of each species were caught to ensure that every species is represented at every site, on every sampling day.
 
-
-
 ```{r}
 final_catch_data |> 
   complete(
@@ -247,57 +241,83 @@ final_catch_data |>
   )
 ```
 
-## Create summary table of salinity and fish counts with SE
+## Calculate Statistics and Plot
+
+#### Calculate sE for salinity 
 
 ```{r}
-# From final_catch_data, generate a clean summary table showing the mean ± standard error of both count and the salinity for each scientific name across each  zone 
-
-summary_table <- final_catch_data |>
-  group_by(scientific_name, zone) |>
+sal_sum <- 
+  final_catch_data |>
+  group_by(zone) |>
   summarise(
-    # Calculate means and SE
-    mean_count    = mean(count, na.rm = TRUE),
-    se_count      = sd(count, na.rm = TRUE) / sqrt(n()),
-    mean_salinity = mean(mean_salinity, na.rm = TRUE),
-    se_salinity   = sd(mean_salinity, na.rm = TRUE) / sqrt(sum(!is.na(mean_salinity))),
-    # Drop groups to present table
+    se_salinity = sd(mean_salinity) / sqrt(n()),
+    sd_salinity = sd(mean_salinity, na.rm = TRUE),
+    median_salinity = median(mean_salinity, na.rm = TRUE),
     .groups = "drop"
   )
 
-print(summary_table)
+sal_sum
 
 
 ```
 
-## Plot Data
+
+#### Make point and error plot
+```{r}
+sal_sum |> 
+  ggplot(aes(x = zone, y = median_salinity)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = median_salinity - sd_salinity, ymax = median_salinity + sd_salinity), width = 0.2) +
+  theme_minimal() +
+  # scientific figures usually don't have titles
+  labs(#title = "Median Salinity by Zone with Standard Deviation Error Bars",
+       x = "Zone",
+       y = "Median Salinity (ppt)")
+  
+```
+
+
+
+#### Calculate Fish Count SE 
+```{r}
+fish_stats <- final_catch_data |>
+  group_by(zone, scientific_name) |>
+  summarise(
+    mean_catch = mean(count),
+    se_catch = sd(count) / sqrt(n()),
+    .groups = "drop"
+  )
+
+fish_stats
+```
+
+#### Plot daily abundance by zone for each species
 
 ```{r}
-# The plot should have professional axis labels, a clean theme (e.g., theme_minimal()), be ordered spatially (e.g. from upstream to downstream), and the facet labels (the scientific names) should really be italicised
-
-summary_table <- summary_table |>
-  mutate(zone = factor(zone, levels = c("upstream", "mid", "downstream")))
-
-ggplot(summary_table, aes(x = mean_salinity, y = mean_count, colour = zone)) +
-  geom_point(size = 2.5) +
-  geom_errorbar(aes(ymin = mean_count - se_count,
-                    ymax = mean_count + se_count),
-                width = 0.3) +
-  geom_errorbar (aes(xmin = mean_salinity - se_salinity,
-                     xmax = mean_salinity + se_salinity),
-                 height = 0.3) +
-  facet_wrap(~ scientific_name,
-             scales = "free_y",
-             labeller = label_parsed) +
-  theme_minimal() +
-  labs(
-    x      = "Mean salinity (ppt)",
-    y      = "Mean catch (individuals)",
-    colour = "Zone",
-    title  = "Fish catch vs. salinity by species and zone"
-  ) +
+fish_stats |> 
+  ggplot(aes(x = zone, y = mean_catch, fill = zone)) +
+  geom_point(position = "dodge", size = 2, pch = 23) +
+  geom_errorbar(aes(ymin = mean_catch - se_catch, ymax = mean_catch + se_catch), 
+                position = position_dodge(0.9), width = 0.2) +
+   #add in points from master data
+   #geom_point(data = final_catch_data, aes(x = zone, y = count), 
+            # position = position_jitter(width = 0.2), alpha = 0.5, size = 1, inherit.aes = FALSE) +
+  facet_wrap(~ scientific_name, scales = "fixed") +
+  theme_bw() +
   theme(
-    strip.text = element_text(face = "italic"),
-    legend.position = "bottom"
+    strip.text = element_text(face = "italic", size = 10, colour = "grey20"),
+    
+    #Add in legend
+    #legend.position = "bottom" 
+    legend.position = "none"
+  ) +
+  labs(
+    # comment out titles for publication
+    #title = "Predatory Fish Abundance across Estuarine Salinity Gradients",
+    #subtitle = "Ross River Estuary System, May 2026",
+    x = "Spatial Zone",
+    y = "Abundance (per day)",
+    fill = "Spatial Zone"
   )
 ```
 
