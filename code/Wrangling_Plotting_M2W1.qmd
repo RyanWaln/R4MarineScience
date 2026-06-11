@@ -168,7 +168,7 @@ saveRDS(clean_scientific_fields, "../outputs/clean_penguin_morphology_cohort.rds
 ### Save Plot
 
 ```{r}
-ggsave("outputs/mass_compare_plot2.png", 
+ggsave("../outputs/figures/mass_compare_plot2.png", 
        plot = mass_compare_plot2, 
        width = 120, height = 120, 
        units = "mm", dpi = 300)
