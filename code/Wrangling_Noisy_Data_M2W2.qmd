@@ -27,7 +27,7 @@ This file covers more advanced data wrangling techniques, including:
 -   Standardizing text and dates in data sets
 -   Dealing with NA values
 
-```{r echo=FALSE}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -60,24 +60,10 @@ library(tidyverse)
 # Compute rate per 10,000 (existing data set)
 table1 %>% 
   mutate(rate = cases / population * 10000)
-#> # A tibble: 6 × 5
-#>   country      year  cases population  rate
-#>   <chr>       <int>  <int>      <int> <dbl>
-#> 1 Afghanistan  1999    745   19987071 0.373
-#> 2 Afghanistan  2000   2666   20595360 1.29 
-#> 3 Brazil       1999  37737  172006362 2.19 
-#> 4 Brazil       2000  80488  174504898 5.61 
-#> 5 China        1999 212258 1272915272 1.67 
-#> 6 China        2000 213766 1280428583 1.67
 
 # Compute cases per year
 table1 %>% 
   count(year, wt = cases)
-#> # A tibble: 2 × 2
-#>    year      n
-#>   <int>  <int>
-#> 1  1999 250740
-#> 2  2000 296920
 
 # Visualise changes over time
 library(ggplot2)
@@ -96,17 +82,6 @@ ggplot(table1, aes(year, cases)) +
 
 #Data on ranked songs of 2000 (each song's rank listed over 76 weeks)
 billboard
-#> # A tibble: 317 × 79
-#>   artist       track               date.entered   wk1   wk2   wk3   wk4   wk5
-#>   <chr>        <chr>               <date>       <dbl> <dbl> <dbl> <dbl> <dbl>
-#> 1 2 Pac        Baby Don't Cry (Ke... 2000-02-26      87    82    72    77    87
-#> 2 2Ge+her      The Hardest Part O... 2000-09-02      91    87    92    NA    NA
-#> 3 3 Doors Down Kryptonite          2000-04-08      81    70    68    67    66
-#> 4 3 Doors Down Loser               2000-10-21      76    76    72    69    67
-#> 5 504 Boyz     Wobble Wobble       2000-04-15      57    34    25    17    17
-#> 6 98^0         Give Me Just One N... 2000-08-19      51    39    34    26    26
-#> # ℹ 311 more rows
-#> # ℹ 71 more variables: wk6 <dbl>, wk7 <dbl>, wk8 <dbl>, wk9 <dbl>, ...
 
 # Move weeks into one column to tidy
 billboard |> 
@@ -116,18 +91,6 @@ billboard |>
     values_to = "rank",       # names the variable stored in the cell values that we named rank (had to create those 2 variables)
     values_drop_na = TRUE
   )
-#> # A tibble: 24,092 × 5
-#>    artist track                   date.entered week   rank
-#>    <chr>  <chr>                   <date>       <chr> <dbl>
-#>  1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
-#>  2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
-#>  3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
-#>  4 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk4      77
-#>  5 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk5      87
-#>  6 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk6      94
-#>  #> # ℹ 24,082 more rows
-
-
 
 ```
 
@@ -157,16 +120,6 @@ df |>
 
 ```{r}
 cms_patient_experience  #load buit in data set expressing patient satisfaction w/ health organizations
-#> # A tibble: 500 × 5
-#>   org_pac_id org_nm                     measure_cd   measure_title   prf_rate
-#>   <chr>      <chr>                      <chr>        <chr>              <dbl>
-#> 1 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_1  CAHPS for MIPS...       63
-#> 2 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_2  CAHPS for MIPS...       87
-#> 3 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_3  CAHPS for MIPS...       86
-#> 4 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_5  CAHPS for MIPS...       57
-#> 5 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_8  CAHPS for MIPS...       85
-#> 6 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_12 CAHPS for MIPS...       24
-#> # ℹ 494 more rows
 
 cms_patient_experience |> 
   distinct(measure_cd, measure_title)   #See complete set of variables
@@ -500,7 +453,7 @@ print(clean_log)
 
 ## Example problem: Penguins, Pivots, and Relational Data
 
-You have the clean penguins dataset, but a colleague has just emailed you a supplementary metadata file containing the GPS coordinates and the date the primary weather stations were installed on each island.
+#### You have the clean penguins dataset, but a colleague has just emailed you a supplementary metadata file containing the GPS coordinates and the date the primary weather stations were installed on each island.
 
 ```{r}
 # Make sure packages are loaded
@@ -515,7 +468,6 @@ island_metadata <- tibble(
 )
 
 print(island_metadata)
-
 
 ```
 
@@ -540,7 +492,7 @@ penguins_spatial <- penguins |>
 head(penguins_spatial)
 ```
 
-A collaborator has asked for a clean, publication-ready table showing the maximum body mass recorded for each species, separated by island
+#### A collaborator has asked for a clean, publication-ready table showing the maximum body mass recorded for each species, separated by island
 
 ```{r}
 penguin_summary = penguins_spatial |>

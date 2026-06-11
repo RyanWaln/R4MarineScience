@@ -20,13 +20,24 @@ editor_options:
 
 ## Introduction
 
-This file is paired with a base R file to allow easy plotting of penguin data. Additional material covered includes:
+This file is paired with a base R file to allow easy plotting of penguin data. 
+
+Material covered on base R script includes:
+
+- importing data 
+- formatting data for R 
+- Tidyverse tibbles vs base R data frames
+- piping 
+- mutating data 
+- basic NA value handling
+
+Material covered on this qmd file includes: 
 
 - piping data to create plots
 - plotting graphs with error bars
 - saving tables and figures
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
 #  R Setup & housekeeping
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -39,13 +50,14 @@ objects()
 
 #### Load packages
 
-```{r packages, message=FALSE, warning=FALSE, include=FALSE}
+```{r packages}
 library(tidyverse)
 ```
 
 #### Source script
 
-```{r source-script1, message=FALSE, warning=FALSE, include=FALSE}
+```{r source-script1}
+#| results: hide
 source("Workshop1.R")
 ```
 
@@ -74,8 +86,6 @@ penguins |>
     fill = "Island"
   )  +
   theme_minimal()
-
-
 ```
 
 #### Instead of creating a summary table object first, you can pipe your grouped data straight into a plot and use geom_errorbar() to represent the spread of your data
@@ -140,10 +150,10 @@ mass_metrics = penguins %>%
   )
 
 print(mass_metrics)  
-
+```
 
 # Data suggests Gentoo Penguins are much bigger than other species and Adelie penguins do not vary much by mass across the islands
-```
+
 
 ## Saving Work
 

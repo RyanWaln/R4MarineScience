@@ -23,6 +23,7 @@ editor_options:
 This file is used to wrangle messy data on Ross River estuary fish surveys and produce final clean tables and figures to determine if fish species distributions are related to salinity
 
 Steps include: 
+
 - Reading in and inspecting data
 - Combining excel sheets
 - Standardizing text and dates across files
@@ -34,7 +35,7 @@ Steps include:
 
 #### Housekeeping
 
-```{r}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -134,7 +135,7 @@ catch_data |>
 
 ## Data Cleaning
 
-#### Standardize text with String
+#### Standardize text with String before any merging 
 
 ```{r}
 
