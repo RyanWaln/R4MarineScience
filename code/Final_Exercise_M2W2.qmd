@@ -22,6 +22,16 @@ editor_options:
 
 This file is used to wrangle messy data on Ross River estuary fish surveys and produce final clean tables and figures to determine if fish species distributions are related to salinity
 
+Steps include: 
+- Reading in and inspecting data
+- Combining excel sheets
+- Standardizing text and dates across files
+- Dealing with NA values
+- Merging files together to insert scientific names and create master data sets
+- Reformatting larger data sets that constantly record data to fit with smaller ones that are only measured daily  
+- Calculating SE for variables 
+- Plotting professional figures
+
 #### Housekeeping
 
 ```{r}
