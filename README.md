@@ -10,6 +10,7 @@ Code covers:
 - Pivoting data to move around rows and columns in tables
 - Separating and uniting tables or specific columns
 - Reformatting larger data sets to fit with smaller ones
+  
 Datasets used:
 - Palmer Penguins data set to explore morphological varriation across 3 species on 3 different islands
 - Ross River estuary fish surveys to determine if changing enviornmental factors like salinity are affecting fish species distributions
