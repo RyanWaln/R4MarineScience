@@ -33,8 +33,6 @@ Steps include:
 - Calculating SE for variables 
 - Plotting professional figures
 
-#### Housekeeping
-
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
@@ -62,7 +60,7 @@ estuary_sonde_data <- read_csv(here::here("data", "workshop_2","estuary_sonde_da
 species_dictionary <- read_csv(here::here("data", "workshop_2","species_dictionary.csv"))
 ```
 
-#### Check site locations
+#### Check site locations (naming of sites not formatted for R)
 
 ```{r}
 estuary_metadata
@@ -71,7 +69,7 @@ glimpse(estuary_metadata)
 str(estuary_metadata)
 ```
 
-#### Check sensor data (dates are in character format, legacy errors, and not 
+#### Check sensor data (dates are in character format and legacy errors are present)  
 
 ```{r}
 estuary_sonde_data
@@ -80,7 +78,7 @@ glimpse(estuary_sonde_data)
 str(estuary_sonde_data)
 ```
 
-#### Check species dictionary
+#### Check species dictionary (only file formatted correctly)
 
 ```{r}
 species_dictionary
@@ -90,7 +88,8 @@ str(species_dictionary)
 ```
 
 
-#### Combine excel tabs on catch log into one data frame so all sheets load
+#### Combine excel tabs on catch log into one data frame so all sheets load for catch log
+#### Issues with catch log include inconsistent naming, wrong date format, and zero count entries missing
 
 ```{r}
 catch1 <- read_excel(here::here("data/workshop_2/estuary_catch_log.xlsx"), sheet = 1)
@@ -200,7 +199,7 @@ clean_sensor_data = estuary_sonde_data |>
 
 ## Put Data into Cohesive Format
 
-#### Put sensor data in daily format
+#### Put sensor data in daily format to combine with catch log
 ```{r}
 # Sensor data is logged every 15 minutes, but catch data is daily. Create a daily summary table that calculates the mean temperature and salinity for each site on each day. 
 
@@ -274,7 +273,7 @@ sal_sum
 ```
 
 
-#### Make point and error plot
+#### Make point and error plot 
 ```{r}
 sal_sum |> 
   ggplot(aes(x = zone, y = median_salinity)) +
@@ -285,9 +284,9 @@ sal_sum |>
   labs(#title = "Median Salinity by Zone with Standard Deviation Error Bars",
        x = "Zone",
        y = "Median Salinity (ppt)")
-  
 ```
 
+Salinity naturally decreases further upstream 
 
 
 #### Calculate Fish Count SE 
@@ -304,7 +303,7 @@ fish_stats <- final_catch_data |>
 fish_stats
 ```
 
-#### Plot daily abundance by zone for each species
+#### Plot daily abundance by zone for each species 
 
 ```{r}
 fish_stats |> 
@@ -334,3 +333,4 @@ fish_stats |>
   )
 ```
 
+Platycephalus seem to stick to Marine zones in line with being a marine species while Lates calcarifer/ Barramundi stick to the upstream which is expected as it is after spawning season when juvenile fish would be upstream

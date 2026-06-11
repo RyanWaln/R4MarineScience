@@ -274,7 +274,7 @@ clean_sites <- messy_sites |>
 
 print(clean_sites)
 
-
+# always standardize text when you need files to interact with each other and when doing modifications on the basis of given text
 ```
 
 #### Using Lubridate to standardize Dates
@@ -389,6 +389,7 @@ shark_fixed <- shark_counts |>
 
 print(shark_fixed)
 
+# Just as important to note when no individuals of a group are present than when in Ecology
 ```
 
 Important: coalesce() is incredibly powerful. If you have two columns, like a primary_sensor and a backup_sensor, coalesce(primary_sensor, backup_sensor) will automatically use the primary reading, but seamlessly fill in the gaps with the backup reading if the primary had failed!)
@@ -428,11 +429,13 @@ raw_catch <- tibble(
 
 print(raw_catch)
 
-# Force inclusion of hidden zero-catch data (imo)
+# Force inclusion of hidden zero-catch data (imo)  
 full_catch_matrix <- raw_catch |>
   complete(site, species, fill = list(count = 0))
 
 print(full_catch_matrix)
+
+# Modifications like this will be used a lot for poorly formated data sets
 ```
 
 #### The nuclear option: drop_na(). May have to remove entire row if NA value is core response variable
@@ -444,11 +447,13 @@ sensor_log <- tibble(
 )
 print(sensor_log)
 
-# Remove any row where salinity is missing
+# Remove any row where salinity is missing 
 clean_log <- sensor_log |>
   drop_na(salinity)
 
 print(clean_log)
+
+# Only use when analysis depends on the missing value
 ```
 
 ## Example problem: Penguins, Pivots, and Relational Data
@@ -482,6 +487,8 @@ clean_metadata <- island_metadata |>
   )
 
 print(clean_metadata)
+
+# Always standardize before merging data sets
 ```
 
 ```{r}

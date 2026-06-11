@@ -57,13 +57,15 @@ library(tidyverse)
 #### Source script
 
 ```{r source-script1}
-#| results: hide
+#| results: hide  # hides long results when rendering sourced scripts
 source("Workshop1.R")
 ```
 
 #### Pipe data to summarize mean body mass for each species and island and create a box plot of body mass by species, with the island variable mapped to fill
 
 ```{r}
+# Always a good idea to run base r scripts to format data before hand if it takes many steps to get it into a format you can start exploring 
+
 mass_metrics = penguins %>%
   group_by(species, island) %>%
   summarise(
@@ -152,7 +154,7 @@ mass_metrics = penguins %>%
 print(mass_metrics)  
 ```
 
-# Data suggests Gentoo Penguins are much bigger than other species and Adelie penguins do not vary much by mass across the islands
+# Data suggests Gentoo Penguins are much bigger than other species and Adelie penguins do not vary much by mass across the islands 
 
 
 ## Saving Work
@@ -184,3 +186,5 @@ ggsave("../outputs/figures/mass_compare_plot2.png",
        units = "mm", dpi = 300)
 
 ```
+
+### Saving figures is the last step in most R projects

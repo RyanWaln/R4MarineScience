@@ -18,7 +18,6 @@
 rm(list=ls())
 objects()
 
-
   # Creating a Standalone Clone of a Repository
  
 ## Get git credentials
@@ -27,7 +26,7 @@ objects()
 ## see Git status
 #usethis::git_sitrep()
 
-## severs connection to original repository to allow storage in own GitHub after cloning
+## severs connection to original repository to allow storage in own GitHub after cloning for when working alone
 #gert::git_remote_remove("origin") 
 
 
@@ -91,9 +90,10 @@ mangrove_data <- read_csv(
   skip = 5,   # Skip the first 5 lines of field notes
   na = c(".", "NA", "9999", "ND", "blank"))  # Convert known text alts to true NA
 
+# Note to omit all comments from excel files when formating for R
 
 
-  #Tidyverse Tibble vs base R Datframes (tibble lets you spot errors)
+  # Tidyverse Tibble vs base R Datframes (tibble lets you spot errors)
 
 # Force a modern tibble to degrade into a legacy base R data frame structure
 benthic_cover_df <- as.data.frame(benthic_cover)
@@ -102,6 +102,7 @@ print(benthic_cover_df)
 # And compare with tibble alternative
 print(benthic_cover)
 
+# Tibbles allow you to see what type of data each column is to prevent data modificaion errors
 
   # Wrangling out ecological signals using Palmer Penguins dataset
   
@@ -113,6 +114,8 @@ data("penguins")
 glimpse(penguins) # tidyverse version (from dplyr package)
 str(penguins) # base R version
 
+# Palmerpenguins measures morphological characteristics of individual penguins of 3 species on 3 different islands
+# Can compare morphological varriation and trends across spatial scales
 
 
   # Types of variables
