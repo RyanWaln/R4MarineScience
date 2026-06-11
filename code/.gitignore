@@ -12,10 +12,11 @@
 
 # Folders to ignore
 archive/
-output/
+outputs/
 test/
 figures/
 libs/
+HTMLs/
 
 # Keywords to ignore
 *archive

@@ -37,7 +37,7 @@ Steps include:
 ```{r}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	include = TRUE,
 	message = FALSE,
 	warning = FALSE)

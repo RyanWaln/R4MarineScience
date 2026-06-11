@@ -27,10 +27,10 @@ This file covers more advanced data wrangling techniques, including:
 -   Standardizing text and dates in data sets
 -   Dealing with NA values
 
-```{r}
+```{r echo=FALSE}
 # R Setup & housekeeping
 knitr::opts_chunk$set(
-	echo = FALSE,
+	echo = TRUE,
 	include = TRUE,
 	message = FALSE,
 	warning = FALSE)
