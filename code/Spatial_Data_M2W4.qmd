@@ -1,0 +1,196 @@
+---
+itle: "R for Marine Science Workshop 4"
+author: "Ryan Waln"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+ html_document:
+    code_folding: show
+    collapse: no
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 10
+    highlight: textmate
+    theme: spacelab
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Introduction
+
+This file covers how to conduct basic spatial analysis in R as a free alternative to GIS. The example scenario utilizes a database of extensive samples of copepod richness throughout Australia’s oceans and the Southern Ocean.
+
+The hypothesis to explore is where species richness is higher in warmer waters than cooler waters. To determine if this question is worth pursuing this file goes through how to develop a map of the data.
+
+Copepod species were counted using samples taken from a Continuous Plankton Recorder. The CPR was towed behind ‘ships of opportunity’ (including commercial and research vessels). ‘Silks’ run continuously through the CPR and the plankton are trapped onto the silks, kind of like a printer that runs all day and night to record plankton in the ocean.
+
+#### Advantages of Rstudio over GIS for spatial analysis:
+
+- R is Free
+- Can iteratively improve code until it works and don’t need to remember complex workflows
+- Easier to use version control with Github
+- Can obtain results from spatial analysis and immediately plot using ggplot2 or combine with other datasets
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+# R Setup & housekeeping
+knitr::opts_chunk$set(
+	echo = TRUE,
+	include = TRUE,
+	message = FALSE,
+	warning = FALSE)
+
+rm(list=ls())
+objects()
+```
+
+```{r}
+#Packages
+library(tidyverse)
+library("sf") 
+library("terra") 
+library("tmap")
+```
+
+## Load in Data
+
+```{r}
+dat <- read_csv(here::here("data","data-for-course/copepods_raw.csv")) 
+dat
+```
+
+#### Check Coordinate Reference System
+
+If your points (like the copepod samples) are not drawing on top of your base map or temperature raster, the first step is always checking the (CRS). Use st_crs(your_sf_object) to ensure the projections match.
+
+## Check Coordinates
+
+```{r}
+# Simple map using plot function with longitude as x axis and latitude as y axis
+# Plots all sample sites and species richness for copepods
+
+ggplot(dat) + aes(x = longitude, y = latitude, color = richness_raw) + geom_point()
+
+# Not a genuine map: doesn't wrap around a globe so the distances are wrong
+```
+
+## Visualize data
+
+#### Species Richness by Latitude
+
+```{r}
+# Visualize data in non-spatial way (can easily swap between spatial and non-spatial analysis in R)
+ggplot(dat, aes(x = latitude, y = richness_raw)) + stat_smooth() + geom_point()
+
+# seems to be an unnatural change in the data pattern at about latitude -44
+```
+
+#### Species Richness by Region
+
+```{r}
+ggplot(dat, aes(x = region, y = richness_raw)) + stat_smooth() + geom_point()
+```
+
+## Turn point data into a spatially referenced data frame (accounts for curve of earth)
+
+```{r}
+sdat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
+```
+
+Coordinate reference systems (crs) are required for 2D mapping to compensate for the lumpy, spherical (3D) nature of the earth. Many different models
+
+#### Check crs specs
+
+```{r}
+crs5126 <- st_crs(4326) 
+crs5126 # look at the whole CRS 
+crs5126$Name # pull out just the name of the crs
+crs5126$wkt # crs in well-known text format
+```
+
+#### Try the R package crs suggest to find the most appropriate projected crs for your data 
+
+#### Examine new data
+```{r}
+sdat # Lat and Long columns have been replaced with geometry column that stores coordinates
+```
+Because the data is basically a dataframe with a geometry, we can use all the operations that work on dataframes on sf simple features collections to wrangle data later if needed.
+
+
+#### Plot more accurate species richness figure
+
+```{r}
+plot(sdat["richness_raw"])
+plot(sdat) # need to use [] to specify variable you want plotted
+```
+```{r}
+#using tmap
+tm1 = tm_shape(sdat) + 
+tm_dots(fill = "richness_raw",
+          fill.scale = tm_scale_continuous(values = "viridis"))
+tm1
+#tm_dots to plot dots of the coordinates. Other options are tm_polygons, tm_symbols
+
+
+```
+
+#### Save Figure
+```{r}
+tmap_save(tm1, filename = "../outputs/figures/Richness_map_1.png", width = 600, height = 600)
+```
+
+
+## Working with Polygons: load in a map of Australia the continental shelf using tmap 
+
+The polygons in this copepod data are stored as shapefiles, however .shp files are are not a good file format because they are inefficient at storing data and to save one shapefile you actually create multiple files. This means bits of the file might be lost if you transfer the data somewhere else. 
+
+Geopackage or .gpkg is a better format which can save and compress multiple different data types all in a single file.
+
+
+#### Load continent data to combine with previous figure
+```{r}
+# st_read() is like read_csv()
+aus <- st_read(here::here("data","data-for-course/spatial-data/Aussie/Aussie.shp")) 
+aus
+shelf <- st_read(here::here("data","data-for-course/spatial-data/aus_shelf/aus_shelf.shp"))
+shelf
+```
+#### Plot Continental Shelf 
+```{r}
+tm_shape(shelf) + tm_polygons()
+```
+
+#### Plot species richness on top of continental shelf
+
+```{r}
+# Troubleshooting: check if objects have same crs 
+st_crs(sdat)
+st_crs(aus)
+st_crs(shelf)
+
+# Formate all to same crs 
+sdat  <- st_transform(sdat, st_crs(shelf))
+aus   <- st_transform(aus, st_crs(sdat))
+shelf <- st_transform(shelf, st_crs(sdat))
+
+# Plot individually to see if mismatch
+tm_shape(aus) + tm_polygons()
+tm_shape(sdat) + tm_dots()
+
+# If they are still plotting separately, ensure crs model is correct by using crs suggest package 
+```
+
+```{r}
+# Combine Plots
+tm_shape(shelf, bbox = sdat) + 
+  tm_polygons() + 
+  tm_shape(aus) + 
+  tm_polygons() + 
+  tm_shape(sdat) + 
+  tm_dots()
+```
+
+
+
+
