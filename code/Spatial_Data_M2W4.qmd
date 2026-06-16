@@ -188,9 +188,93 @@ tm_shape(shelf, bbox = sdat) +
   tm_shape(aus) + 
   tm_polygons() + 
   tm_shape(sdat) + 
-  tm_dots()
+  tm_dots() +
+  tmap_style("cobalt")
+# tmap_style("natural")
+#  tmap_style("classic")
+#  tmap_style("beaver")
 ```
 
+
+
+## Basics of tmap Aethstetics 
+```{r}
+data("World")
+
+tm_shape(World) +  # Plots world and shape of continents and nations
+    tm_polygons("HPI")  # plots layers of ploygons for HPI data
+```
+#### View modes
+```{r}
+# Can enter into interactive view mode 
+tmap_mode("view")
+
+tm_shape(World) +
+    tm_polygons("HPI")
+```
+
+#### Can plot multiple shapes & layers
+```{r}
+data(World, metro, rivers, land)
+
+tmap_mode("plot")
+## tmap mode set to plotting
+tm_shape(land) +
+    tm_raster("elevation", palette = terrain.colors(10)) +
+tm_shape(World) +
+    tm_borders("white", lwd = .5) +
+    tm_text("iso_a3", size = "AREA") +
+tm_shape(metro) +
+    tm_symbols(col = "red", size = "pop2020", scale = .5) +
+tm_legend(show = FALSE)
+```
+
+#### Facets can be created in three ways:
+
+```{r}
+# assign multiple variable names to one aesthetic(tm_polygons)
+tmap_mode("view")
+tm_shape(World) +
+    tm_polygons(c("HPI", "economy")) +
+    tm_facets(sync = TRUE, ncol = 2)
+```
+
+```{r}
+# split the spatial data with the by argument of tm_facets
+
+tmap_mode("plot")
+data(NLD_muni)
+
+# Safe column computation to deal with NA values and not divide by zero
+NLD_muni$perc_men <- ifelse(
+  !is.na(NLD_muni$population) & NLD_muni$population > 0,
+  NLD_muni$pop_men / NLD_muni$population * 100,
+  NA
+)
+
+# Drop rows with missing province
+NLD_muni <- NLD_muni[!is.na(NLD_muni$province), ]
+NLD_muni$province <- as.character(NLD_muni$province)
+
+tm_shape(NLD_muni) +
+  tm_polygons("perc_men", palette = "RdYlBu") +
+  tm_facets(by = "province", free.coords = TRUE, drop.units = TRUE) # other arguments ensure geometry is the same
+```
+
+
+```{r}
+# use tmap_arrange()
+tmap_mode("plot")
+
+data(NLD_muni)
+tm1 <- tm_shape(NLD_muni) +
+  tm_polygons(fill = "population")
+
+tm2 <- tm_shape(NLD_muni) +
+  tm_bubbles(size = "population")
+
+tmap_arrange(tm1, tm2)
+```
 
 
 
