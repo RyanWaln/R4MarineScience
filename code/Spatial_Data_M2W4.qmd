@@ -103,10 +103,10 @@ Coordinate reference systems (crs) are required for 2D mapping to compensate for
 #### Check crs specs
 
 ```{r}
-crs5126 <- st_crs(4326) 
-crs5126 # look at the whole CRS 
-crs5126$Name # pull out just the name of the crs
-crs5126$wkt # crs in well-known text format
+crs4326 <- st_crs(4326) 
+crs4326 # look at the whole CRS 
+crs4326$Name # pull out just the name of the crs
+crs4326$wkt # crs in well-known text format
 ```
 
 #### Try the R package crs suggest to find the most appropriate projected crs for your data 
@@ -194,8 +194,6 @@ tm_shape(shelf, bbox = sdat) +
 #  tmap_style("classic")
 #  tmap_style("beaver")
 ```
-
-
 
 ## Basics of tmap Aethstetics 
 ```{r}
