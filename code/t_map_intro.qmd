@@ -220,7 +220,7 @@ The following code example is based on the above code, which represents a height
 ```{r}
 map_europe2 <- map_europe +
   tm_shape(europe_shape) +
-  tm_lines(alpha = 0.3)
+  tm_lines(col_alpha = 0.3)
 map_europe3 <- map_europe2  +
   tm_shape(cities) +
   tm_dots(size = 0.3)
