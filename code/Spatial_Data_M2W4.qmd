@@ -134,9 +134,8 @@ tm1
 
 
 ```
-
-#### Save Figure
 ```{r}
+# Save Figure
 tmap_save(tm1, filename = "../outputs/figures/Richness_map_1.png", width = 600, height = 600)
 ```
 
@@ -183,18 +182,30 @@ tm_shape(sdat) + tm_dots()
 
 ```{r}
 # Combine Plots
+tmap_mode("plot")
 cope_ab_dist <- tm_shape(shelf, bbox = sdat) + 
   tm_polygons() + 
   tm_shape(aus) + 
   tm_polygons() + 
   tm_shape(sdat) + 
+    # Plot richness data as dots and set color contrast
   tm_dots(fill = "richness_raw",
-          fill.scale = tm_scale_continuous(values =  "matplotlib.yl_or_rd" )) +
-  tmap_style("cobalt")
+          fill.scale = tm_scale_continuous(values =  "matplotlib.yl_or_rd" )) + 
+
+  tmap_style("cobalt") + #Set style of contient map
+tm_scalebar(position = c("left", "bottom")) + # add scalebar and set position
+tm_compass(position = c("left", "top"), size = 1) # add compass
+
+# Additionsl styles below
 # tmap_style("natural")
 #  tmap_style("classic")
 #  tmap_style("beaver")
 
+cope_ab_dist
+```
+```{r}
+#Interactive mode 
+tmap_mode("view")
 cope_ab_dist
 ```
 
@@ -205,4 +216,56 @@ tmap_save(cope_ab_dist, filename = "../outputs/figures/cope_ab_dist_1.png")
 ```
 
 
+## Load in Raster Data to add in temperature
+```{r}
+rsst <- rast((here::here("data",'data-for-course/spatial-data/MeanAVHRRSST/MeanAVHRRSST.grd')))
+plot(rsst)
 
+```
+
+## Add in temperature
+```{r}
+cope_temp1 <- tm_shape(rsst) + 
+  # raster in continuous temp scale
+  tm_raster(col.scale = tm_scale_continuous(values = "-RdBu"), # - sign flips color gradient order
+            col.legend = tm_legend(title = "SST")) +
+   tm_shape(sdat) + 
+  tm_dots(col = "richness_raw", 
+          palette = "Blues", 
+          title = "Species #") + 
+  tm_compass(position = c("left", "top"), size = 1) 
+
+cop_temp1
+```
+
+```{r}
+# Save plot
+tmap_save(cope_temp1, filename = "../outputs/figures/cope_temp1.png")
+```
+
+
+## Extract Temperature Values
+```{r}
+sdat$sst <- terra::extract(rsst, vect(sdat))[,2]
+```
+
+Note that terra::extract() isn’t compatible with sf objects (yet) (unlike raster::extract()). So we need to wrap our points data in vect() to convert it to terra’s SpatVector format for storing point data.
+
+## Plot temperature against species richness
+```{r}
+ggplot(sdat, aes(sst, richness_raw)) + 
+  geom_point() + 
+  theme_minimal()
+```
+
+## Test correlation with Pearson's Correlation Coefficient
+```{r}
+with(sdat, cor.test(sst, richness_raw))
+```
+
+The test indicates a significant positive correlation with SST. However, if you examine the plot you may notice that variance in richness tends to increase with SST.
+
+
+## Additional content: 
+Go to link below to explore additional statistics and predictive modeling
+https://www.seascapemodels.org/spatial-analysis-in-r/spatial-analysis-in-r.html#Extracting_temperatures_at_the_sampling_sites

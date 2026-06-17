@@ -19,7 +19,9 @@ editor_options:
 ---
 ## Introduction
 
-This file goes over basic syntax and commands for how to use the t_map package when conducting spatial analysis, most of the code is copied from the following repository authroed by Nico Hahn: https://github.com/nicoFhahn/geocomputation
+This file goes over basic syntax and commands for how to use the t_map package when conducting spatial analysis, most of the code is copied from the following repository authored by Nico Hahn: https://github.com/nicoFhahn/geocomputation
+
+NOTE: code is outdated and has limited use
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
 # R Setup & housekeeping
@@ -213,7 +215,6 @@ With `tmap` objects can not only be plotted but can also be saved as objects of 
 map_europe <- tm_shape(europe_raster) +
   tm_raster()
 class(map_europe)
-
 ```
 The saved object can be easily extended or retrieved at a later time in the console. Furthermore, additional layers can be added to the object with `tm_shape()`, which allows several maps to be combined into one.
 The following code example is based on the above code, which represents a height grid of Europe. First the border lines of the individual states are added, followed by all cities with more than one million inhabitants.
@@ -224,12 +225,14 @@ map_europe2 <- map_europe +
 map_europe3 <- map_europe2  +
   tm_shape(cities) +
   tm_dots(size = 0.3)
+
 ```
 ```{r, echo=FALSE}
 map_europe3 <- map_europe3 +
   tm_legend(show = FALSE)
 ```
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", fig.cap="Use of several layers"}
+map_europe2
 map_europe3
 ```
 By saving individual maps as objects, they can also be displayed next to or on top of each other using the `map_arrange()` function.
