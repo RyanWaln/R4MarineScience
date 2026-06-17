@@ -188,7 +188,8 @@ cope_ab_dist <- tm_shape(shelf, bbox = sdat) +
   tm_shape(aus) + 
   tm_polygons() + 
   tm_shape(sdat) + 
-  tm_dots() +
+  tm_dots(fill = "richness_raw",
+          fill.scale = tm_scale_continuous(values =  "matplotlib.yl_or_rd" )) +
   tmap_style("cobalt")
 # tmap_style("natural")
 #  tmap_style("classic")
