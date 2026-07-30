@@ -13,4 +13,4 @@ Code covers:
   
 Datasets used:
 - Palmer Penguins data set to explore morphological varriation across 3 species on 3 different islands
-- Ross River estuary fish surveys to determine if changing enviornmental factors like salinity are affecting fish species distributions
+- Unpublished Ross River estuary fish surveys to determine if changing enviornmental factors like salinity are affecting fish species distributions
